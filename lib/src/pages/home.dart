@@ -15,17 +15,19 @@ class HomePage extends StatelessWidget {
     final Size _size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: bgColor,
-      body: SafeArea(
-        child: Center(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            width: 450,
-            child: Column(
-              children: [
-                _buildAppBar(),
-                _buildMonitor(),
-                _buildButtons(_size, buttonsColor),
-              ],
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Center(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              width: 450,
+              child: Column(
+                children: [
+                  _buildAppBar(),
+                  _buildMonitor(),
+                  _buildButtons(_size, buttonsColor),
+                ],
+              ),
             ),
           ),
         ),
@@ -140,61 +142,71 @@ class HomePage extends StatelessWidget {
       children: [
         Expanded(
           child: SizedBox(
-            child: Table(
+            child: Column(
               children: [
-                TableRow(
+                Table(
                   children: [
-                    buildButton("C", 1, _color[0], size),
-                    buildButton("⌫", 1, _color[0], size),
-                    buildButton("½", 1, _color[0], size),
-                    buildButton("÷", 1, _color[0], size),
+                    TableRow(
+                      children: [
+                        buildButton("C", 1, _color[0], size),
+                        buildButton("⌫", 1, _color[0], size),
+                        buildButton("½", 1, _color[0], size),
+                        buildButton("÷", 1, _color[0], size),
+                      ],
+                    ),
+                    TableRow(
+                      children: [
+                        buildButton("7", 1, _color[1], size),
+                        buildButton("8", 1, _color[1], size),
+                        buildButton("9", 1, _color[1], size),
+                        buildButton("×", 1, _color[0], size),
+                      ],
+                    ),
+                    TableRow(
+                      children: [
+                        buildButton("4", 1, _color[1], size),
+                        buildButton("5", 1, _color[1], size),
+                        buildButton("6", 1, _color[1], size),
+                        buildButton("-", 1, _color[0], size),
+                      ],
+                    ),
+                    TableRow(
+                      children: [
+                        buildButton("1", 1, _color[1], size),
+                        buildButton("2", 1, _color[1], size),
+                        buildButton("3", 1, _color[1], size),
+                        buildButton("+", 1, _color[0], size),
+                      ],
+                    ),
                   ],
                 ),
-                TableRow(
+                Table(
+                  columnWidths: const {
+                    0: FractionColumnWidth(0.5),
+                  },
                   children: [
-                    buildButton("7", 1, _color[1], size),
-                    buildButton("8", 1, _color[1], size),
-                    buildButton("9", 1, _color[1], size),
-                    buildButton("×", 1, _color[0], size),
-                  ],
-                ),
-                TableRow(
-                  children: [
-                    buildButton("4", 1, _color[1], size),
-                    buildButton("5", 1, _color[1], size),
-                    buildButton("6", 1, _color[1], size),
-                    buildButton("-", 1, _color[0], size),
-                  ],
-                ),
-                TableRow(
-                  children: [
-                    buildButton("1", 1, _color[1], size),
-                    buildButton("2", 1, _color[1], size),
-                    buildButton("3", 1, _color[1], size),
-                    buildButton("+", 1, _color[0], size),
-                  ],
-                ),
-                TableRow(
-                  children: [
-                    buildButton(".", 1, _color[1], size),
-                    buildButton("0", 1, _color[1], size),
-                    buildButton("00", 1, _color[1], size),
-                    buildButton("=", 1, _color[2], size),
+                    TableRow(
+                      children: [
+                        buildButton("0", 3, _color[1], size),
+                        buildButton(".", 1, _color[1], size),
+                        buildButton("=", 1, _color[2], size),
+                      ],
+                    ),
                   ],
                 ),
               ],
             ),
           ),
-        )
+        ),
       ],
     );
   }
 
   Widget buildButton(
-      String buttonText, double buttonHeight, Color buttonColor, Size size) {
+      String buttonText, double buttonWidth, Color buttonColor, Size size) {
     return SizedBox(
-      height: size.height * 0.1 * buttonHeight,
-      width: size.height * 0.1 * buttonHeight,
+      height: size.height * 0.1 * 1.25,
+      width: size.width * 0.1 * buttonWidth,
       child: NeumorphicButton(
         onPressed: () {},
         margin: const EdgeInsets.all(5),
@@ -210,8 +222,7 @@ class HomePage extends StatelessWidget {
           alignment: Alignment.center,
           child: Text(
             buttonText,
-            style: const TextStyle(
-                color: Colors.white, fontSize: 40, fontFamily: 'Digital'),
+            style: const TextStyle(color: Colors.white, fontSize: 32),
             textAlign: TextAlign.center,
           ),
         ),
