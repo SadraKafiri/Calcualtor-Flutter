@@ -1,7 +1,13 @@
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:math_expressions/math_expressions.dart';
 
-class HomePage extends StatelessWidget {
-  HomePage({Key? key}) : super(key: key);
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   final Color bgColor = const Color(0xFF2f3740);
   final Color iconColor = Colors.white70;
   final List<Color> buttonsColor = [
@@ -9,6 +15,16 @@ class HomePage extends StatelessWidget {
     const Color(0xFFc5f3f2),
     const Color(0xFFfad716),
   ];
+
+  String equation = "0";
+  String result = " ";
+  String expression = "";
+  bool isCalculate = false;
+
+  Color firstTextColor = Colors.white;
+  Color secondTextColor = Colors.grey;
+  int firstTextFlex = 2;
+  int secondTextFlex = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -106,29 +122,41 @@ class HomePage extends StatelessWidget {
           color: bgColor,
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: const [
-            Text(
-              '12 * 457',
-              style: TextStyle(
-                fontFamily: 'Digital',
-                fontSize: 28,
-                color: Colors.grey,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Expanded(
+              flex: firstTextFlex,
+              child: FittedBox(
+                fit: BoxFit.fitWidth,
+                child: Text(
+                  equation,
+                  style: TextStyle(
+                    fontFamily: 'Digital',
+                    color: firstTextColor,
+                  ),
+                  maxLines: 1,
+                  textAlign: TextAlign.end,
+                ),
               ),
-              textAlign: TextAlign.end,
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
-            Text(
-              '14,321',
-              style: TextStyle(
-                fontFamily: 'Digital',
-                fontSize: 55,
-                color: Colors.white,
-                letterSpacing: 2,
+            Expanded(
+              flex: secondTextFlex,
+              child: FittedBox(
+                fit: BoxFit.fitWidth,
+                child: Text(
+                  result,
+                  style: TextStyle(
+                    fontFamily: 'Digital',
+                    color: secondTextColor,
+                    letterSpacing: 2,
+                  ),
+                  maxLines: 1,
+                  textAlign: TextAlign.end,
+                ),
               ),
-              textAlign: TextAlign.end,
             ),
           ],
         ),
@@ -150,7 +178,7 @@ class HomePage extends StatelessWidget {
                       children: [
                         buildButton("C", 1, _color[0], size),
                         buildButton("⌫", 1, _color[0], size),
-                        buildButton("½", 1, _color[0], size),
+                        buildButton("%", 1, _color[0], size),
                         buildButton("÷", 1, _color[0], size),
                       ],
                     ),
@@ -159,7 +187,7 @@ class HomePage extends StatelessWidget {
                         buildButton("7", 1, _color[1], size),
                         buildButton("8", 1, _color[1], size),
                         buildButton("9", 1, _color[1], size),
-                        buildButton("×", 1, _color[0], size),
+                        buildButton("*", 1, _color[0], size),
                       ],
                     ),
                     TableRow(
@@ -208,7 +236,8 @@ class HomePage extends StatelessWidget {
       height: size.height * 0.1 * 1.25,
       width: size.width * 0.1 * buttonWidth,
       child: NeumorphicButton(
-        onPressed: () {},
+        onPressed: () => buttonPressed(buttonText),
+        duration: const Duration(milliseconds: 10),
         margin: const EdgeInsets.all(5),
         padding: const EdgeInsets.all(10),
         style: NeumorphicStyle(
@@ -218,15 +247,125 @@ class HomePage extends StatelessWidget {
             lightSource: LightSource.topLeft,
             intensity: 0.4,
             color: buttonColor),
-        child: Align(
-          alignment: Alignment.center,
-          child: Text(
-            buttonText,
-            style: const TextStyle(color: Colors.white, fontSize: 32),
-            textAlign: TextAlign.center,
+        child: FittedBox(
+          child: Align(
+            alignment: Alignment.center,
+            child: Text(
+              buttonText,
+              style: const TextStyle(color: Colors.white, fontSize: 32),
+              textAlign: TextAlign.center,
+            ),
           ),
         ),
       ),
     );
+  }
+
+  buttonPressed(String buttonText) {
+    setState(() {
+      if (buttonText == "C") {
+        equation = "0";
+        result = " ";
+        expression = "";
+        firstTextColor = Colors.white;
+        secondTextColor = Colors.grey;
+        firstTextFlex = 2;
+        secondTextFlex = 1;
+        isCalculate = false;
+      } else if (buttonText == "⌫") {
+        if (isCalculate) return;
+
+        equation = equation.substring(0, equation.length - 1);
+        if (equation == '') {
+          equation = "0";
+          result = " ";
+          expression = "";
+          firstTextColor = Colors.white;
+          secondTextColor = Colors.grey;
+          firstTextFlex = 2;
+          secondTextFlex = 1;
+          isCalculate = false;
+        }
+
+        expression = equation;
+        expression = expression.replaceAll('×', '*');
+        expression = expression.replaceAll('÷', '/');
+        try {
+          Parser p = Parser();
+          Expression exp = p.parse(expression);
+
+          ContextModel cm = ContextModel();
+          result = '= ${exp.evaluate(EvaluationType.REAL, cm)}';
+        } catch (e) {
+          result = "= ERROR";
+        }
+      } else if (buttonText == "+") {
+        if (isCalculate) return;
+        if (equation.substring(equation.length - 1) != buttonText) {
+          equation = equation + "+";
+        }
+      } else if (buttonText == "-") {
+        if (isCalculate) return;
+        if (equation.substring(equation.length - 1) != buttonText) {
+          equation = equation + "-";
+        }
+      } else if (buttonText == "*") {
+        if (isCalculate) return;
+        if (equation.substring(equation.length - 1) != buttonText) {
+          equation = equation + "*";
+        }
+      } else if (buttonText == "÷") {
+        if (isCalculate) return;
+        if (equation.substring(equation.length - 1) != buttonText) {
+          equation = equation + "÷";
+        }
+      } else if (buttonText == "%") {
+      } else if (buttonText == "=") {
+        if (isCalculate) return;
+        expression = equation;
+        expression = expression.replaceAll('×', '*');
+        expression = expression.replaceAll('÷', '/');
+        try {
+          Parser p = Parser();
+          Expression exp = p.parse(expression);
+
+          ContextModel cm = ContextModel();
+          result =
+              '= ${removeDecimalZeroFormat(exp.evaluate(EvaluationType.REAL, cm))}';
+          firstTextColor = Colors.grey;
+          secondTextColor = Colors.white;
+          firstTextFlex = 1;
+          secondTextFlex = 2;
+          isCalculate = true;
+        } catch (e) {
+          result = "= ERROR";
+        }
+      } else {
+        if (isCalculate) return;
+        if (equation == "0") {
+          equation = buttonText;
+        } else {
+          equation = equation + buttonText;
+        }
+
+        expression = equation;
+        expression = expression.replaceAll('×', '*');
+        expression = expression.replaceAll('÷', '/');
+        try {
+          Parser p = Parser();
+          Expression exp = p.parse(expression);
+
+          ContextModel cm = ContextModel();
+          result =
+              '= ${removeDecimalZeroFormat(exp.evaluate(EvaluationType.REAL, cm))}';
+        } catch (e) {
+          result = "= ERROR";
+        }
+      }
+    });
+  }
+
+  String removeDecimalZeroFormat(double n) {
+    return n.toStringAsFixed(n.truncateToDouble() == n ? 0 : 1);
   }
 }
