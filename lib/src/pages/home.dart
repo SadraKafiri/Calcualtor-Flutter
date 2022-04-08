@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:math_expressions/math_expressions.dart';
 
@@ -65,29 +67,23 @@ class _HomePageState extends State<HomePage> {
               intensity: 0.4,
               color: bgColor),
           child: Icon(
-            Icons.refresh_outlined,
-            color: iconColor,
-          ),
-        ),
-        const SizedBox(width: 15),
-        NeumorphicButton(
-          onPressed: () {},
-          padding: const EdgeInsets.all(8),
-          style: NeumorphicStyle(
-              shape: NeumorphicShape.concave,
-              boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(60)),
-              depth: 8,
-              lightSource: LightSource.topLeft,
-              intensity: 0.4,
-              color: bgColor),
-          child: Icon(
             Icons.settings,
             color: iconColor,
           ),
         ),
-        const Spacer(),
+        const Expanded(
+          child: Text(
+            'Calculator',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 22,
+            ),
+          ),
+        ),
         NeumorphicButton(
-          onPressed: () {},
+          onPressed: () => exit(0),
           padding: const EdgeInsets.all(8),
           style: NeumorphicStyle(
               shape: NeumorphicShape.concave,
@@ -320,8 +316,10 @@ class _HomePageState extends State<HomePage> {
           equation = equation + "÷";
         }
       } else if (buttonText == "%") {
+        if (isCalculate) return;
       } else if (buttonText == "=") {
         if (isCalculate) return;
+
         expression = equation;
         expression = expression.replaceAll('×', '*');
         expression = expression.replaceAll('÷', '/');
